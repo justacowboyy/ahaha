@@ -1,9 +1,6 @@
 from flask import Flask,render_template, request, jsonify
 from langchain_groq import ChatGroq  # Ensure you have the correct library installed
-from langchain_community.retrievers import PineconeHybridSearchRetriever
 from langchain_huggingface import HuggingFaceEmbeddings
-from pinecone_text.sparse import BM25Encoder
-from pinecone import Pinecone
 from neo4j import GraphDatabase
 import os
 from flask_cors import CORS
@@ -30,8 +27,6 @@ NEO4J_URI = os.getenv("NEO4J_URI")
 NEO4J_USER = os.getenv("NEO4J_USER")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-INDEX_NAME = "hahahybridsearch"
 
 # Load dataset
 DATA_FILE = "dataset/imdb_top_1000.csv"
@@ -53,19 +48,6 @@ def init_chat_groq():
         groq_api_key=GROQ_API_KEY,
     )
 
-
-# Initialize Pinecone Hybrid Search Retriever
-def init_pinecone_retriever():
-    """Initialize the Pinecone retriever with hybrid search."""
-    pinecone = Pinecone(api_key=PINECONE_API_KEY)
-    index = pinecone.Index(INDEX_NAME)
-    embed = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    bm = BM25Encoder().load("bmvalues.json")
-    return PineconeHybridSearchRetriever(
-        embeddings=embed,
-        sparse_encoder=bm,
-        index=index,
-    )
 
 
 # Query Cypher Database via LangChain and Neo4j
@@ -89,21 +71,6 @@ def generate_cypher_query(question, chat_model, schema, prompt_template):
     except Exception as e:
         return str(e)
 
-
-# Perform Hybrid Search
-def hybrid_search(query, retriever):
-    """
-    Perform hybrid search using Pinecone retriever.
-
-    :param query: Search query from the user.
-    :param retriever: Instance of PineconeHybridSearchRetriever.
-    :return: List of search results.
-    """
-    try:
-        results = retriever.invoke(query)
-        return results
-    except Exception as e:
-        return {"error": str(e)}
 
 
 # Flask Route for Cypher Q&A
@@ -148,34 +115,6 @@ def cypher_qa():
     chat_model = init_chat_groq()
     response = generate_cypher_query(question, chat_model, schema, prompt_template)
     return jsonify({"result": response})
-
-
-# Flask Route for Hybrid Search
-@app.route('/api/search', methods=['POST'])
-def search():
-    """
-    Handle API requests for hybrid search.
-    """
-    data = request.get_json()
-    query = data.get('query','')
-
-    if not query:
-        return jsonify({"error": "Query is required"}), 400
-
-    retriever = init_pinecone_retriever()
-    results = hybrid_search(query, retriever)
-
-    # Format search results
-    if isinstance(results, list):
-        response = []
-        for result in results:
-            movie_title = daata['Series_Title'].iloc[int(result.metadata['original_index'])]
-            response.append({
-                "title": movie_title,
-                "content": result.page_content            })
-        return jsonify({"results": response}), 200
-    else:
-        return jsonify(results), 500
 
 
 # Run Flask App
