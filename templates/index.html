@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #141414;
+            color: #fff;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            color: #e50914;
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* About Section */
+        .about-section {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .about-toggle {
+            background-color: #e50914;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .about-toggle:hover {
+            background-color: #b20710;
+        }
+
+        .about-content {
+            display: none;
+        }
+
+        .about-content.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .example-queries {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .example-query {
+            background-color: #454545;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .example-query:hover {
+            background-color: #555;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #e50914;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-bar input[type="text"] {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .search-bar select {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .search-bar button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e50914;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: #b20710;
+        }
+
+        /* Movie Grid */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .movie-info p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .movie-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .search-bar input[type="text"],
+            .search-bar select,
+            .search-bar button {
+                width: 100%;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .example-queries {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Luma AI</h1>
+    <div class="container">
+        <!-- About Section -->
+        <button class="about-toggle" onclick="toggleAbout()">About Luma AI</button>
+        <div class="about-section about-content" id="aboutSection">
+            <h2>About Luma AI</h2>
+            <p>Luma AI solves two main challenges in movie search:</p>
+            <ol>
+                <li><strong>Constraint-based Search (Cypher):</strong> Perfect for specific queries with multiple conditions, when you're restricted to certain time duration or certain genre. Example: Finding Tarantino action movies from the 2010s under 160 minutes.
+                    <ul>
+                        <li>Tech stack used: Knowledge graph database and GraphRAG </li>
+                    </ul>
+                </li>
+                <li><strong>Hybrid-Similarity Search (Hybrid):</strong> Ideal when you can't remember the exact title. Searches through movie titles and descriptions using advanced similarity matching.  Example : Movies with apes.
+                    <ul>
+                        <li>Tech stack used: Pinecone database and Hybrid search: BM25 encoder + Semantic search</li>
+                    </ul>
+                </li>
+            </ol>
+            
+           
+
+            <div class="social-links">
+                <a href="https://github.com/sharathdoes" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://instagram.com/sharath_7693" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/sharath-chandra-gaddam-851a45263/" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="query" placeholder="Enter your query...">
+            <select id="searchType">
+                <option value="cypher">Cypher Search</option>
+                <option value="hybrid">Hybrid Search</option>
+            </select>
+            <button onclick="performSearch()">Search</button>
+        </div>
+        <p><strong>Try these example searches:</strong></p>
+        <div class="example-queries">
+            <span class="example-query" onclick="setSearchQuery('Nolan action movies from 2010s under 150min')">Nolan action movies from 2010s under 150min</span>
+            <span class="example-query" onclick="setSearchQuery('Movies with apes in it')">Movies with apes in it</span>
+            <span class="example-query" onclick="setSearchQuery('Rajamouli movies above 8 rating')">Rajamouli movies above 8 rating</span>
+            <span class="example-query" onclick="setSearchQuery('Martin Scorsese movies with Leonardo DiCaprio')">Martin Scorsese movies with Leonardo DiCaprio</span>
+        </div>
+        <!-- Movie Grid -->
+        <div class="movie-grid" id="movieGrid">
+            <!-- Results will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function toggleAbout() {
+            const aboutSection = document.getElementById('aboutSection');
+            aboutSection.classList.toggle('show');
+            const button = document.querySelector('.about-toggle');
+            button.textContent = aboutSection.classList.contains('show') ? 'Hide About' : 'About Luma AI';
+        }
+
+        function setSearchQuery(query) {
+            document.getElementById('query').value = query;
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('query').value;
+            const searchType = document.getElementById('searchType').value;
+            const movieGrid = document.getElementById('movieGrid');
+
+            // Clear previous results
+            movieGrid.innerHTML = '';
+
+            if (!query) {
+                alert('Please enter a query!');
+                return;
+            }
+
+            // Determine the API endpoint based on search type
+            const endpoint = searchType === 'cypher' ? '/api/cypher' : '/api/search';
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response}`);
+                }
+
+                const data = await response.json();
+
+                // Display results
+                if (searchType === 'cypher') {
+                    console.log(data)
+                    const resultText = data["result"];
+                    const titles = resultText.match(/\| ([^|]+) \| https?:\/\//g)?.map(match => match.split('|')[1].trim());
+                    if (titles) {
+                        titles.forEach(title => {
+                            movieGrid.innerHTML += `
+                                <div class="movie-card">
+                                    <div class="movie-info">
+                                        <p>${title}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        movieGrid.innerHTML = `<div class="movie-card"><div class="movie-info"><p>No results found.</p></div></div>`;
+                    }
+                } else if (searchType === 'hybrid') {
+                    if (data.results && data.results.length > 0) {
+                        data.results.forEach(movie => {
+                            movieGrid.innerHTML += `
+                                <div class="movie-card">
+                                    <div class="movie-info">
+                                        <p>${movie.title}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        movieGrid.innerHTML = `<div class="movie-card"><div class="movie-info"><p>No results found.</p></div></div>`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                movieGrid.innerHTML = `<div class="movie-card"><div class="movie-info"><p>An error occurred. Please try again.</p></div></div>`;
+            }
+        }
+    </script>
+</body>
+</html>
