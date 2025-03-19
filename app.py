@@ -28,15 +28,7 @@ NEO4J_USER = os.getenv("NEO4J_USER")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# Load dataset
-DATA_FILE = "dataset/imdb_top_1000.csv"
-daata = pd.read_csv(DATA_FILE)
 
-
-# Initialize Neo4j Driver
-def init_neo4j():
-    """Initialize the Neo4j database connection."""
-    return GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 
 
 # Initialize ChatGroq Model
