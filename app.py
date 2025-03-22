@@ -1,7 +1,6 @@
 from flask import Flask,render_template, request, jsonify
 from langchain_groq import ChatGroq  # Ensure you have the correct library installed
 from langchain_huggingface import HuggingFaceEmbeddings
-from neo4j import GraphDatabase
 import os
 from flask_cors import CORS
 
@@ -23,9 +22,6 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def home():
     return render_template('index.html')
 # Environment variables
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USER = os.getenv("NEO4J_USER")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
